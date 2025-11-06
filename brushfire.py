@@ -10,7 +10,7 @@ hub = PrimeHub()
 #  Hardware Initialization 
 # ------------------------------------------------------------------------------
 
-leftMotor = Motor(Port.C)
+leftMotor = Motor(Port.F)
 rightMotor = Motor(Port.B)
 
 # ------------------------------------------------------------------------------
