@@ -14,18 +14,19 @@ rightMotor = Motor(Port.B)
 # ------------------------------------------------------------------------------
 #  Global Variables 
 # ------------------------------------------------------------------------------
-rows = 16
-cols = 10 
+rows = 10
+cols = 16
 
 # Create a blank maze filled with zeros (0 = free tile)
 maze = [[0 for _ in range(cols)] for _ in range(rows)]
 
 numObstacles = 13
-obstacles = [(3, 0), (3, 1), (3, 2), (6, 5)]
+obstacles = [(1, 1), (1, 2), (2, 1), (2, 2), (2, 7), (2, 8), (5, 4), 
+(5, 5), (5, 6), (8, 2), (8, 8), (9, 2), (10, 2)]
 
 # Valid start and end points (x, y) within the grid bounds
-start = (0, 0)
-end = (cols - 1, rows - 1)
+start = (1, 5)
+end = (10, 5)
 
 # ------------------------------------------------------------------------------
 #  Main (simple test to confirm code loads)
@@ -34,7 +35,7 @@ end = (cols - 1, rows - 1)
 def forward():
     leftMotor.run(-200)
     rightMotor.run(200)
-    wait(3150)
+    wait(3050)
     leftMotor.stop()
     rightMotor.stop()
     wait(100)
@@ -54,5 +55,4 @@ def turnLeft():
     leftMotor.stop()
     rightMotor.stop()
     wait(100)
-
 

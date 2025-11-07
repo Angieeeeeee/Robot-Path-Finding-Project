@@ -1,24 +1,24 @@
-def plan_path(grid, start, goal, safety_margin=0, return_raw=False):
+def planPath(grid, start, goal, safetyMargin=0, return_raw=False):
     H, W = len(grid), len(grid[0])
-    _assert_point(start, W, H, "start")
-    _assert_point(goal,  W, H, "goal")
-    g = inflate_obstacles(grid, safety_margin)
+    assertPoint(start, W, H, "start")
+    assertPoint(goal,  W, H, "goal")
+    g = inflateObstacles(grid, safetyMargin)
 
     sx, sy = start; gx, gy = goal
     if g[sy][sx] == 1:
-        raise ValueError("Start lies in inflated obstacle; reduce safety_margin or move start.")
+        raise ValueError("Start lies in inflated obstacle; reduce safetyMargin or move start.")
     if g[gy][gx] == 1:
-        raise ValueError("Goal lies in inflated obstacle; reduce safety_margin or move goal.")
+        raise ValueError("Goal lies in inflated obstacle; reduce safetyMargin or move goal.")
 
-    clearance = brushfire_obstacle_distance(g)
-    wave = wavefront_from_goal(g, goal)
-    raw = extract_path_with_clearance(start, goal, wave, clearance)
+    clearance = obstacleDistance(g)
+    wave = wavefrontGoal(g, goal)
+    raw = extractedPath(start, goal, wave, clearance)
     if not raw:
         return [] if not return_raw else ([], [])
-    smooth = smooth_path(raw)
+    smooth = smoothPath(raw)
     return (raw, smooth) if return_raw else smooth
 
-def _assert_point(p, W, H, name):
+def assertPoint(p, W, H, name):
     x, y = p
     if not (0 <= x < W and 0 <= y < H):
         raise ValueError("%s %r out of bounds for grid %dx%d" % (name, p, W, H))
@@ -26,7 +26,7 @@ def _assert_point(p, W, H, name):
 def inb(x, y, W, H):
     return 0 <= x < W and 0 <= y < H
 
-def brushfire_obstacle_distance(grid):
+def obstacleDistance(grid):
     H, W = len(grid), len(grid[0])
     INF = 10**9
     dist = [[INF]*W for _ in range(H)]
@@ -49,7 +49,7 @@ def brushfire_obstacle_distance(grid):
                 q.append((vx, vy))
     return dist
 
-def wavefront_from_goal(grid, goal):
+def wavefrontGoal(grid, goal):
     gx, gy = goal
     H, W = len(grid), len(grid[0])
     INF = 10**9
@@ -69,7 +69,7 @@ def wavefront_from_goal(grid, goal):
                 q.append((vx, vy))
     return wave
 
-def extract_path_with_clearance(start, goal, wave, clearance):
+def extractedPath(start, goal, wave, clearance):
     sx, sy = start; gx, gy = goal
     H, W = len(wave), len(wave[0])
     INF = 10**9
@@ -121,7 +121,7 @@ def extract_path_with_clearance(start, goal, wave, clearance):
             break
     return path
 
-def smooth_path(path):
+def smoothPath(path):
     if len(path) <= 2:
         return path[:]
     sm = [path[0]]
@@ -134,7 +134,7 @@ def smooth_path(path):
     sm.append(path[-1])
     return sm
 
-def inflate_obstacles(grid, margin=1):
+def inflateObstacles(grid, margin=1):
     if margin <= 0:
         return [row[:] for row in grid]
     H, W = len(grid), len(grid[0])

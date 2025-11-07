@@ -1,8 +1,7 @@
-from brushfirealgorithm import plan_path
+from brushfirealgorithm import planPath
 from robotpath import (
     maze, rows, cols, obstacles, start, end,
-    forward, turnLeft, turnRight
-)
+    forward, turnLeft, turnRight )
 
 NORTH = (0, -1)
 EAST  = (1, 0)
@@ -10,22 +9,21 @@ SOUTH = (0, 1)
 WEST  = (-1, 0)
 HEADINGS = [NORTH, EAST, SOUTH, WEST]
 
-def heading_index(h): return HEADINGS.index(h)
-def rotate_left(h):   return HEADINGS[(heading_index(h) - 1) % 4]
-def rotate_right(h):  return HEADINGS[(heading_index(h) + 1) % 4]
+def rotateLeft(h):   return HEADINGS[(HEADINGS.index(h) - 1) % 4]
+def rotateRight(h):  return HEADINGS[(HEADINGS.index(h) + 1) % 4]
 
-def turn_robot_from_to(h_from, h_to):
+def turnRobot(h_from, h_to):
     if h_to == h_from:
         return h_to
-    if h_to == rotate_right(h_from):
-        turnRight(); return h_to
-    if h_to == rotate_left(h_from):
-        turnLeft();  return h_to
+    if h_to == rotateRight(h_from):
+        turnLeft(); return h_to
+    if h_to == rotateLeft(h_from):
+        turnRight();  return h_to
     # 180:
     turnRight(); turnRight()
     return h_to
 
-def grid_from_maze(maze, obstacles):
+def mazeGrid(maze, obstacles):
     H, W = len(maze), len(maze[0])
     g = [[0 for _ in range(W)] for __ in range(H)]
     for y in range(H):
@@ -37,7 +35,7 @@ def grid_from_maze(maze, obstacles):
             g[oy][ox] = 1
     return g
 
-def expand_to_unit_steps(path):
+def expandedSteps(path):
     """Expand waypoints into 4-connected unit steps."""
     if not path or len(path) == 1:
         return path
@@ -58,13 +56,13 @@ def expand_to_unit_steps(path):
             out.append((x0, y0))
     return out
 
-def drive_path(path, start_heading=EAST):
+def drivePath(path, startHeading=EAST):
     if not path or len(path) == 1:
         return
     # Ensure we have 1-tile steps
-    steps = expand_to_unit_steps(path)
+    steps = expandedSteps(path)
 
-    heading = start_heading
+    heading = startHeading
     for i in range(1, len(steps)):
         x0, y0 = steps[i-1]
         x1, y1 = steps[i]
@@ -72,23 +70,18 @@ def drive_path(path, start_heading=EAST):
         if step not in HEADINGS:
             raise ValueError("Non 4-connected step %r at %d: %r -> %r" %
                              (step, i, steps[i-1], steps[i]))
-        heading = turn_robot_from_to(heading, step)
+        heading = turnRobot(heading, step)
         forward()
 
-def main():
-    grid = grid_from_maze(maze, obstacles)
-    try:
-        raw, smooth = plan_path(grid, start, end, safety_margin=0, return_raw=True)
-    except ValueError as e:
-        print("Planning error:", e)
-        return
+grid = mazeGrid(maze, obstacles)
+try:
+    raw, smooth = planPath(grid, start, end, safetyMargin=0, return_raw=True)
+except ValueError as e:
+    print("Planning error:", e)
 
-    tile_path = raw if raw else []
-    if not tile_path:
-        print("No path found."); return
+tilePath = raw if raw else []
+if not tilePath:
+    print("No path found.");
 
-    print("Planned raw path:", tile_path)
-    drive_path(tile_path, start_heading=EAST)
-
-if __name__ == "__main__":
-    main()
+print("Planned raw path:", tilePath)
+drivePath(tilePath, startHeading=EAST)
