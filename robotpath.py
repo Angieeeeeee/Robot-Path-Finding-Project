@@ -21,7 +21,7 @@ cols = 10
 maze = [[0 for _ in range(cols)] for _ in range(rows)]
 
 numObstacles = 13
-obstacles = []  # You can fill this in later with (x, y) tuples
+obstacles = [(3, 0), (3, 1), (3, 2), (6, 5)]
 
 # Valid start and end points (x, y) within the grid bounds
 start = (0, 0)
@@ -54,3 +54,5 @@ def turnLeft():
     leftMotor.stop()
     rightMotor.stop()
     wait(100)
+
+
